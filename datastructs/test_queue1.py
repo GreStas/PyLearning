@@ -1,23 +1,83 @@
 import unittest
-import unittest.mock
 
-from testing import main4unittests as mn
+from datastructs.queue1 import Queue1 as Q1
 
 
 class TestMain(unittest.TestCase):
 
     def setUp(self):
-        self.m = mn.Maxer([1,2,3])
-        print("Set Up")
-
-    @unittest.mock.patch('main4unittests.f')
-    def testMax1(self, a):
-        a.side_effect = [0] # подменить результат возврата функции f() в значение 5
-        self.assertEqual(self.m.max(), 3, "max([1,2,3])")
-
-    def testMax2(self):
-        self.m.append(5)
-        self.assertEqual(self.m.max(), 5, "max([1,2,3])")
+        self.q1 = Q1(3)
+        self.q1.prn_state()
 
     def tearDown(self):
         print("Tear Down")
+
+    def testCreate(self):
+        size = 4
+        self.q1 = Q1(size)
+        self.assertEqual([None,]*size,
+                         self.q1.data,
+                         "Test content of rawdata for just created Queue1")
+        self.assertEqual("None:None {}".format(repr([None]*size)),
+                         repr(self.q1),
+                         "Test __repr__ for just created Queue1")
+        self.assertEqual("{}".format(str([])),
+                         str(self.q1),
+                         "Test __str__ for just created Queue1")
+
+    def testPut1st(self):
+        self.q1.put(1)
+        self.assertEqual((0,1,1),
+                         (self.q1.tail,self.q1.head,self.q1.data[self.q1.tail]),
+                         "Check attributes:")
+        self.assertEqual(1,
+                         len(self.q1),
+                         "Test length:")
+        self.assertEqual("{}:{} {}".format(repr(0), repr(1), repr([1, None, None,])),
+                         repr(self.q1),
+                         "Test repr:")
+        self.assertEqual(str([1,]),
+                         str(self.q1),
+                         "Test str:")
+
+    def testFillUp(self):
+        for i in range(self.q1.size):
+            self.q1.put(i+1)
+        self.assertEqual((0, 0, 1, [1, 2, 3]),
+                         (self.q1.tail, self.q1.head, self.q1.data[self.q1.tail], self.q1.data),
+                         "Check attributes:")
+        self.assertEqual(3,
+                         len(self.q1),
+                         "Test length:")
+        self.assertEqual("{}:{} {}".format(repr(0), repr(0), repr([1, 2, 3,])),
+                         repr(self.q1),
+                         "Test repr:")
+        self.assertEqual(str([1, 2, 3]),
+                         str(self.q1),
+                         "Test str:")
+
+    def testOverflow(self):
+        for i in range(self.q1.size):
+            self.q1.put(i+1)
+            # self.q1.prn_state()
+        else:
+            print(i)
+            # self.assertRaises(ValueError, self.q1.put, i + 1)
+            with self.assertRaises(ValueError) as cm:
+                self.q1.put(i + 1)
+            err = cm.exception
+            self.assertEqual("Queue is full.",
+                             str(err),
+                             "Check exception message:")
+        self.assertEqual((0, 0, 1, [1, 2, 3]),
+                         (self.q1.tail, self.q1.head, self.q1.data[self.q1.tail], self.q1.data),
+                         "Check attributes:")
+        self.assertEqual(3,
+                         len(self.q1),
+                         "Test length:")
+        self.assertEqual("{}:{} {}".format(repr(0), repr(0), repr([1, 2, 3,])),
+                         repr(self.q1),
+                         "Test repr:")
+        self.assertEqual(str([1, 2, 3]),
+                         str(self.q1),
+                         "Test str:")

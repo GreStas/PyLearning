@@ -10,50 +10,50 @@ class Queue1:
         self.head = None    # позиция, в которую будет сделана следующая запись.
         self.tail = None    # позиция, из которой будем считывать.
 
-    def _is_emmpy(self):
-        return self.head is None or self.tail is None or self.tail == self.head
+    def is_emmpy(self):
+        """ Очередь пуста только тогда, когда оба указателя сброшены в None """
+        return self.head is None or self.tail is None   # or self.tail == self.head
 
     def __len__(self):
-        if self.head is None or self.tail is None or self.head == self.tail:
+        if self.is_emmpy():
             return 0
         elif self.head > self.tail:
             return self.head - self.tail
-        else:
+        else:  # self.head <= self.tail
             return self.head + (self.size - self.tail)
 
     def __str__(self):
-        if self._is_emmpy():
+        """ Только данные в очереди, которые записаны и не вычитаны, т.е. готовы к получению. """
+        if self.is_emmpy():
             return str([])
         elif self.head > self.tail:
             return str(self.data[self.tail:self.head])
-        elif self.head < self.tail:
+        elif self.head <= self.tail:
             return str(self.data[self.tail:] + self.data[:self.head])
 
     def __repr__(self):
-        if self.head is None or self.tail is None:
-            r = repr([])
-        elif self.head >= self.tail:
-            r = repr(self.data[self.tail:self.head+1])
-        elif self.head < self.tail:
-            r = repr(self.data[self.tail:] + self.data[:self.head])
-        return "{}:{} {}".format(self.tail, self.head, r)
-
+        """ Отладочный вывод показывает:
+         хвост
+         голову
+         сырой массив
+         """
+        return "{}:{} {}".format(repr(self.tail), repr(self.head), repr(self.data))
 
     def put(self, value):
         # вычисляем и сохраняем следующий индекс, так как в большинстве случаев переполнение буфера не ожидается.
         if self.head is None:
             self.head = self.tail = 0
             self.data[self.head] = value
-            return
-
-        next_ptr = (self.head + 1) % self.size
-        if next_ptr == self.tail:
+        elif self.head == self.tail:
             # голова не может наступить на хвост
             raise ValueError("Queue is full.")
-        self.head = next_ptr
-        self.data[self.head] = value
+        else:
+            self.data[self.head] = value
+        self.head = (self.head + 1) % self.size
+        return
 
     def get(self):
+        # TODO: Если хвост доберётся до головы, то необходимо сбросить оба индекса в None
         if len(self) == 0:
             raise ValueError("Queue is empty.")
         result = self.data[self.tail]
