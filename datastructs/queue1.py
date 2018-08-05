@@ -53,11 +53,12 @@ class Queue1:
         return
 
     def get(self):
-        # TODO: Если хвост доберётся до головы, то необходимо сбросить оба индекса в None
-        if len(self) == 0:
+        if self.is_emmpy():
             raise ValueError("Queue is empty.")
         result = self.data[self.tail]
         self.tail = (self.tail + 1) % self.size
+        if self.tail == self.head:
+            self.tail = self.head = None
         return result
 
     def prn_state(self):
@@ -75,23 +76,3 @@ class Queue1:
             )
         else:
             print("Queue is empty!")
-
-if __name__ == "__main__":
-
-    q1 = Queue1(3); q1.prn_state()
-    try:
-        q1.put(0); q1.prn_state()
-        print(q1.get()); q1.prn_state()
-    #     q1.put(1); q1.prn_state()
-    #     q1.put(2); print(len(q1),repr(q1))
-    #     q1.put(3); print(len(q1),repr(q1))
-    #     q1.put(4); print(len(q1),repr(q1))
-    except ValueError as e:
-        print(e)
-    #
-    # print(q1.data)
-    #
-    # print(q1.get(), repr(q1), q1.data)
-    # print(q1.get(), repr(q1), q1.data)
-    # print(q1.get(), repr(q1), q1.data)
-

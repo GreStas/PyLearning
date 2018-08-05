@@ -4,13 +4,10 @@ from datastructs.queue1 import Queue1 as Q1
 
 
 class TestMain(unittest.TestCase):
+    # def tearDown(self): print("Tear Down")
 
     def setUp(self):
         self.q1 = Q1(3)
-        self.q1.prn_state()
-
-    def tearDown(self):
-        print("Tear Down")
 
     def testCreate(self):
         size = 4
@@ -24,6 +21,12 @@ class TestMain(unittest.TestCase):
         self.assertEqual("{}".format(str([])),
                          str(self.q1),
                          "Test __str__ for just created Queue1")
+        with self.assertRaises(ValueError) as cm:
+            self.q1.get()
+        err = cm.exception
+        self.assertEqual("Queue is empty.",
+                         str(err),
+                         "Check exception message:")
 
     def testPut1st(self):
         self.q1.put(1)
@@ -61,8 +64,6 @@ class TestMain(unittest.TestCase):
             self.q1.put(i+1)
             # self.q1.prn_state()
         else:
-            print(i)
-            # self.assertRaises(ValueError, self.q1.put, i + 1)
             with self.assertRaises(ValueError) as cm:
                 self.q1.put(i + 1)
             err = cm.exception
@@ -81,3 +82,58 @@ class TestMain(unittest.TestCase):
         self.assertEqual(str([1, 2, 3]),
                          str(self.q1),
                          "Test str:")
+
+    def testGet1st(self):
+        self.q1.put(1)
+        self.assertEqual(1, self.q1.get(), "Check getting 1st value.")
+        self.assertEqual((None, None,),
+                         (self.q1.tail,self.q1.head),
+                         "Check attributes:")
+
+    def testGetOverhead(self):
+        self.q1.put(1)
+        self.q1.get()
+        with self.assertRaises(ValueError) as cm:
+            self.q1.get()
+        err = cm.exception
+        self.assertEqual("Queue is empty.",
+                         str(err),
+                         "Check exception message:")
+
+    def testGetOverheadCycle(self):
+        # Заполним полностью
+        self.q1.put(1); self.q1.put(2); self.q1.put(3)
+        # Вычитаем на 1 меньше
+        self.q1.get(); self.q1.get()
+        self.q1.put(4); self.q1.put(5)
+        self.q1.get(); self.q1.get()
+        self.assertEqual((1, 2, 5, [4, 5, 3]),
+                         (self.q1.tail, self.q1.head, self.q1.data[self.q1.tail], self.q1.data),
+                         "Check attributes:")
+
+    def testLong(self):
+        """ Goal: Create 2-nd list from 1-st list by Queue1. """
+        li = [x for x in range(1, 11)]
+        lo = []
+        for x in li:
+            try:
+                self.q1.put(x)
+            except ValueError as eread:
+                while True:
+                    try:
+                        lo.append(self.q1.get())
+                    except ValueError as ewrite:
+                        break
+                self.q1.put(x)
+        else:
+            while True:
+                try:
+                    lo.append(self.q1.get())
+                except ValueError as ewrite:
+                    break
+        self.assertEqual(li,
+                         lo,
+                         "Check lists:")
+        self.assertEqual((None, None,),
+                         (self.q1.tail,self.q1.head),
+                         "Check attributes:")
