@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import unittest
 
 from datastructs.queue1 import Queue1 as Q1
