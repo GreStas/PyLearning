@@ -33,6 +33,12 @@ class TestMain(unittest.TestCase):
                          p1.primes,
                          "Check fill cache out to 31")
 
+    def test_isprime_1(self):
+        self.assertTrue(self.p.is_prime(1), "Check result for 1")
+        self.assertEqual([2, ],
+                         self.p.primes,
+                         "Check list for 1")
+
     def test_isprime_3(self):
         self.assertTrue(self.p.is_prime(3), "Check result for 3")
         self.assertEqual([2, 3, ],
