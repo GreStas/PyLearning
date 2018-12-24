@@ -19,6 +19,11 @@ class TestMain(unittest.TestCase):
                          self.p.primes,
                          "Check default cache")
 
+    def test_create_some(self):
+        p1 = Convergence(100)
+        p2 = Convergence(10)
+        self.assertEqual(p1.primes, p2.primes, "Check create come instances with diferent init parameter")
+
     def test_create_31(self):
         self.p.clear()
         p1 = Convergence(31)

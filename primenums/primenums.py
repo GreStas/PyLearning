@@ -1,12 +1,17 @@
 class Convergence():
     """
-    Реализация генератора простых чисел с кэшированием уже вычисленных значений.
+    Реализация проверки на вхождение в ряд простых чисел с кэшированием уже вычисленных значений.
     """
 
-    def __new__(cls, *args):
+    def __new__(cls, *args, **kwargs):
         """ for Singletone """
         if not hasattr(cls, '_instance'):
-            cls._instance = super().__new__(cls, *args)
+            cls._instance = super().__new__(cls)
+            """ Следующий вариант вызывает ошибку "TypeError: object.__new__() takes no arguments"
+                если его использовать в консоле интерпритатора.
+                В unittest ошибки нет.
+            cls._instance = super().__new__(cls, *args, **kwargs)
+            """
         return cls._instance
 
     def __init__(self, num=2):
@@ -14,7 +19,8 @@ class Convergence():
         Конструктор может сразу создать необходимиое количество простых чисел в кеше.
         :param num: максимально ожидаемое число позволяет сразу закешировать весь ряд простых числе до >= num
         """
-        self.clear()
+        if not hasattr(self, 'primes'):
+            self.clear()
         self.is_prime(num)
 
     def clear(self):
