@@ -111,14 +111,9 @@ class Primes:
         return len(self.base.primes)
 
 
-class GenPrimes(Primes):
-
-    def __next__(self):
-        i = 0
-        while True:
-            while i < len(self.primes):
-                yield self.primes[i]
-            self.reward()
-
-    def __call__(self, *args, **kwargs):
-        return self.__next__()
+def GenPrimes(bufsize=1):
+    i = 0
+    primes = Primes(bufsize)
+    while True:
+        yield primes[i]
+        i += 1

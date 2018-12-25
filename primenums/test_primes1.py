@@ -2,7 +2,7 @@
 
 import unittest
 
-from primenums import Convergence, Primes
+from primenums import Convergence, Primes, GenPrimes
 
 
 class TestConvergence(unittest.TestCase):
@@ -139,3 +139,26 @@ class TestPrimes(unittest.TestCase):
         self.assertEqual(primes_list,
                          self.p.get_primes,
                          "Check default cache")
+
+
+class TestGenPrimes(unittest.TestCase):
+
+    def setUp(self):
+        self.gp = GenPrimes()
+
+    def test_next(self):
+        self.assertEqual(2, next(self.gp))
+        self.assertEqual(3, next(self.gp))
+        self.assertEqual(5, next(self.gp))
+
+    def test_next_def(self):
+        p = GenPrimes()
+        self.test_next()
+
+    def test_next_buf2(self):
+        self.gp = GenPrimes(2)
+        self.test_next()
+
+    def test_next_buf3(self):
+        self.gp = GenPrimes(3)
+        self.test_next()
