@@ -14,6 +14,12 @@ class TestMain(unittest.TestCase):
         self.p = Convergence()
         self.p.clear()  # чтобы не мешал Синглтон
 
+    def test_append(self):
+        self.assertEqual(3, self.p.append())
+        self.assertEqual(5, self.p.append())
+        self.assertEqual(7, self.p.append())
+        self.assertEqual(11, self.p.append())
+
     def test_create_def(self):
         self.assertEqual([2, ],
                          self.p.primes,
@@ -34,7 +40,7 @@ class TestMain(unittest.TestCase):
     def test_create_30(self):
         self.p.clear()
         p1 = Convergence(30)
-        self.assertEqual([2, 3, 5, 7, 11, 13, 17, 19, 23, 29,],
+        self.assertEqual([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31,],
                          p1.primes,
                          "Check fill cache out to 31")
 
@@ -52,7 +58,7 @@ class TestMain(unittest.TestCase):
 
     def test_isprime_4(self):
         self.p.is_prime(4)
-        self.assertEqual([2, 3, ],
+        self.assertEqual([2, 3, 5, ],
                          self.p.primes,
                          "Check list for 4")
         self.assertFalse(self.p.is_prime(4), "Check result for ")
@@ -66,7 +72,7 @@ class TestMain(unittest.TestCase):
 
     def test_isprime_6(self):
         self.p.is_prime(6)
-        self.assertEqual([2, 3, 5, ],
+        self.assertEqual([2, 3, 5, 7, ],
                          self.p.primes,
                          "Check list for 6")
         self.assertFalse(self.p.is_prime(6), "Check result for 6")

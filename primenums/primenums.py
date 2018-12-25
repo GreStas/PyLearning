@@ -34,7 +34,7 @@ class Convergence():
         :param num: проверяемое число позволяет сразу закешировать весь ряд простых числе до >= num
         :return:
         """
-        if num < 1:
+        if num is None or num < 1:
             return False
         elif num == 1:
             return True
@@ -42,14 +42,25 @@ class Convergence():
             return num in self.primes
 
         # Заполнить кеш значениями простых чисел до >= искомого
-        for i in range(self.primes[-1]+1, num+1):  # генерируем кандидатов на простое число
+        while num > self.append():
+            pass
+
+        return num == self.primes[-1]
+
+    def append(self):
+        """
+        Добавить новый элемент в конец ряда
+        :return: Значение добавленного элемента
+        """
+        i = self.primes[-1] + 1
+        while True:
             for j in self.primes:   # проверяем делители из кэша простых чисел
                 if i % j == 0:
                     # если i делится на одно из простых числел, то дальше проверять нет смысла
                     # и надо перейти к следующему кандидату
+                    i += 1
                     break
             else:
-                # если не разделилось ни на одно из простых числел, то надо дописать в кеш
+                # если не разделилось ни на одно из простых числел, то надо дописать в кеш и вернуть найденное значение
                 self.primes.append(i)
-
-        return num == self.primes[-1]
+                return i
