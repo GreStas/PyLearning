@@ -1,1 +1,1 @@
-from .primenums import Convergence
+from .primenums import Convergence, Primes

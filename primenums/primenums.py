@@ -1,4 +1,4 @@
-class Convergence():
+class Convergence:
     """
     Реализация проверки на вхождение в ряд простых чисел с кэшированием уже вычисленных значений.
     """
@@ -25,6 +25,10 @@ class Convergence():
 
     def clear(self):
         self.primes = [2, ]
+
+    @property
+    def get_primes(self):
+        return self.primes
 
     def is_prime(self, num):
         """
@@ -64,3 +68,56 @@ class Convergence():
                 # если не разделилось ни на одно из простых числел, то надо дописать в кеш и вернуть найденное значение
                 self.primes.append(i)
                 return i
+
+
+class Primes:
+    """
+    Реализация получения простых чисел:
+    * по номеру в ряде
+    * следующее  значение после указанного
+    * генератор последовательности с про-буферизацией на N-элементов вперёд
+    """
+    def __init__(self, bufsize=1):
+        self.base = Convergence()
+        self.bufsize =  int(bufsize) if bufsize is not None and bufsize > 0 else 1
+        self.forward()
+
+    @property
+    def get_primes(self):
+        return self.base.get_primes
+
+    def clear(self):
+        self.base.clear()
+        self.forward()
+
+    def forward(self):
+        """
+        Сформировать дополнительно buf-элементов
+        :param items: размер буфера - количество элементов
+        :return: list of appended items
+        """
+        cur_len = len(self.base.primes)
+        for i in range(self.bufsize):
+            self.base.append()
+        return self.base.primes[cur_len:]
+
+    def __getitem__(self, item):
+        while item + self.bufsize + 1 > len(self.base.primes):
+            self.forward()
+        return self.base.primes[item]
+
+    def __len__(self):
+        return len(self.base.primes)
+
+
+class GenPrimes(Primes):
+
+    def __next__(self):
+        i = 0
+        while True:
+            while i < len(self.primes):
+                yield self.primes[i]
+            self.reward()
+
+    def __call__(self, *args, **kwargs):
+        return self.__next__()
