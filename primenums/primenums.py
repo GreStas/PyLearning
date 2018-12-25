@@ -26,6 +26,9 @@ class Convergence:
     def clear(self):
         self.primes = [2, ]
 
+    def __len__(self):
+        return len(self.primes)
+
     @property
     def get_primes(self):
         return self.primes
@@ -75,12 +78,11 @@ class Primes:
     Реализация получения простых чисел:
     * по номеру в ряде
     * следующее  значение после указанного
-    * генератор последовательности с про-буферизацией на N-элементов вперёд
+    * генератор последовательности с про-буферизацией на N-элементов вперёд в случае если не попали в кэш
     """
     def __init__(self, bufsize=1):
         self.base = Convergence()
         self.bufsize =  int(bufsize) if bufsize is not None and bufsize > 0 else 1
-        self.forward()
 
     @property
     def get_primes(self):
@@ -88,7 +90,6 @@ class Primes:
 
     def clear(self):
         self.base.clear()
-        self.forward()
 
     def forward(self):
         """
@@ -102,7 +103,7 @@ class Primes:
         return self.base.primes[cur_len:]
 
     def __getitem__(self, item):
-        while item + self.bufsize + 1 > len(self.base.primes):
+        while item >= len(self.base):
             self.forward()
         return self.base.primes[item]
 

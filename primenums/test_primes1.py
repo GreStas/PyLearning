@@ -95,21 +95,47 @@ class TestPrimes(unittest.TestCase):
         self.assertEqual(1,
                          self.p.bufsize,
                          "Check default bufsize")
-        self.assertEqual([2, 3, ],
+        self.assertEqual([2, ],
                          self.p.get_primes,
                          "Check default cache")
 
     def test_create_bufsize2(self):
         p1 = Primes(2)
-        self.assertEqual([2, 3, 5, 7, ],
+        self.assertEqual([2, ],
                          p1.get_primes,
                          "Check default cache for bufsize=2")
 
     def test_index_def(self):
         self.assertEqual(2, self.p[0])
+        self.assertEqual(1, len(self.p), "Check length of cache")
         self.assertEqual(3, self.p[1])
+        self.assertEqual(2, len(self.p), "Check length of cache")
         self.assertEqual(5, self.p[2])
-        self.assertEqual(4, len(self.p), "Check length of cache")
-        self.assertEqual([2, 3, 5, 7, ],
+        self.assertEqual(3, len(self.p), "Check length of cache")
+        self.assertEqual([2, 3, 5, ],
+                         self.p.get_primes,
+                         "Check default cache")
+
+    def test_index_bufsize2(self):
+        p1 = Primes(2)
+        primes_list = [2, 3, 5, 7, 11, ]
+        for i in range(len(primes_list)):
+            j = primes_list[i]
+            self.assertEqual(j, p1[i], "Check Primes[{}] == {}".format(i, j))
+            l = (i + p1.bufsize - 1) // p1.bufsize * p1.bufsize +1
+            self.assertEqual(l, len(p1), "Check length of cache bufsize == {} for {} is {}".format(p1.bufsize, i, l))
+        self.assertEqual(primes_list,
+                         self.p.get_primes,
+                         "Check default cache")
+
+    def test_index_bufsize3(self):
+        p1 = Primes(3)
+        primes_list = [2, 3, 5, 7, 11, 13, 17, ]
+        for i in range(len(primes_list)):
+            j = primes_list[i]
+            self.assertEqual(j, p1[i], "Check Primes[{}] == {}".format(i, j))
+            l = (i + p1.bufsize - 1) // p1.bufsize * p1.bufsize +1
+            self.assertEqual(l, len(p1), "Check length of cache bufsize == {} for {} is {}".format(p1.bufsize, i, l))
+        self.assertEqual(primes_list,
                          self.p.get_primes,
                          "Check default cache")
